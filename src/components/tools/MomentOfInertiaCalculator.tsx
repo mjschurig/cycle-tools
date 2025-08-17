@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
+import WheelDiameterSelector from '../WheelDiameterSelector';
 
 interface InputFieldProps {
   label: string;
@@ -155,15 +156,11 @@ const MomentOfInertiaCalculator: React.FC = () => {
                 step={10}
                 description="Weight of the rim/wheel body"
               />
-              <InputField
-                label="Rim Diameter"
-                value={wheelComponents.rimDiameter}
-                onChange={(rimDiameter) => setWheelComponents(prev => ({ ...prev, rimDiameter }))}
-                unit="mm"
-                min={400}
-                max={800}
-                step={1}
-                description="Overall diameter of the rim (e.g., 622mm for 700c)"
+              <WheelDiameterSelector
+                selectedDiameter={wheelComponents.rimDiameter}
+                onDiameterChange={(rimDiameter) => setWheelComponents(prev => ({ ...prev, rimDiameter }))}
+                label="Wheel Size"
+                description="Select common wheel size or enter custom diameter"
               />
               <InputField
                 label="Rim Height"
