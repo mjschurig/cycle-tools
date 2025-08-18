@@ -6,7 +6,8 @@ const ChainLengthCalculator: React.FC<ChainLengthCalculatorProps> = () => {
   const [chainstayLength, setChainstayLength] = useState<string>('')
   const [largestChainring, setLargestChainring] = useState<string>('')
   const [largestCassette, setLargestCassette] = useState<string>('')
-  const [pulleyTeeth, setPulleyTeeth] = useState<string>('11') // Default for most derailleurs
+  const [upperPulleyTeeth, setUpperPulleyTeeth] = useState<string>('11') // Default for most derailleurs
+  const [lowerPulleyTeeth, setLowerPulleyTeeth] = useState<string>('11') // Default for most derailleurs
   const [unit, setUnit] = useState<'inches' | 'mm'>('inches')
   const [result, setResult] = useState<number | null>(null)
   const [chainLinks, setChainLinks] = useState<number | null>(null)
@@ -14,15 +15,16 @@ const ChainLengthCalculator: React.FC<ChainLengthCalculatorProps> = () => {
   // Calculate chain length whenever inputs change
   useEffect(() => {
     calculateChainLength()
-  }, [chainstayLength, largestChainring, largestCassette, pulleyTeeth, unit])
+  }, [chainstayLength, largestChainring, largestCassette, upperPulleyTeeth, lowerPulleyTeeth, unit])
 
   const calculateChainLength = () => {
     const C = parseFloat(chainstayLength)
     const F = parseFloat(largestChainring)
     const R = parseFloat(largestCassette)
-    const P = parseFloat(pulleyTeeth)
+    const Pu = parseFloat(upperPulleyTeeth)
+    const Pl = parseFloat(lowerPulleyTeeth)
 
-    if (isNaN(C) || isNaN(F) || isNaN(R) || isNaN(P) || C <= 0 || F <= 0 || R <= 0 || P <= 0) {
+    if (isNaN(C) || isNaN(F) || isNaN(R) || isNaN(Pu) || isNaN(Pl) || C <= 0 || F <= 0 || R <= 0 || Pu <= 0 || Pl <= 0) {
       setResult(null)
       setChainLinks(null)
       return
@@ -33,10 +35,10 @@ const ChainLengthCalculator: React.FC<ChainLengthCalculatorProps> = () => {
       chainstayInches = C / 25.4 // Convert mm to inches
     }
 
-    // Standard chain length formula with pulley consideration
-    // L = 2C + (F + R + 2P)/4 + 1
-    // Where P is the pulley teeth (typically 11 for most derailleurs)
-    const chainLengthInches = 2 * chainstayInches + (F + R + 2 * P) / 4 + 1
+    // Standard chain length formula with separate pulley consideration
+    // L = 2C + (F + R + Pu + Pl)/4 + 1
+    // Where Pu is upper pulley teeth and Pl is lower pulley teeth
+    const chainLengthInches = 2 * chainstayInches + (F + R + Pu + Pl) / 4 + 1
 
     setResult(chainLengthInches)
     
@@ -56,7 +58,8 @@ const ChainLengthCalculator: React.FC<ChainLengthCalculatorProps> = () => {
     setChainstayLength('')
     setLargestChainring('')
     setLargestCassette('')
-    setPulleyTeeth('11')
+    setUpperPulleyTeeth('11')
+    setLowerPulleyTeeth('11')
     setResult(null)
     setChainLinks(null)
   }
@@ -158,22 +161,41 @@ const ChainLengthCalculator: React.FC<ChainLengthCalculatorProps> = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-white/90 text-sm font-medium mb-2">
-                  Derailleur Pulley Teeth
-                </label>
-                <input
-                  type="number"
-                  step="1"
-                  min="1"
-                  value={pulleyTeeth}
-                  onChange={(e) => setPulleyTeeth(e.target.value)}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  placeholder="e.g., 11"
-                />
-                <p className="text-xs text-white/60 mt-1">
-                  Standard derailleur pulleys have 11 teeth
-                </p>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-white/90 text-sm font-medium mb-2">
+                    Upper Pulley Teeth
+                  </label>
+                  <input
+                    type="number"
+                    step="1"
+                    min="1"
+                    value={upperPulleyTeeth}
+                    onChange={(e) => setUpperPulleyTeeth(e.target.value)}
+                    className="w-full px-3 py-2 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    placeholder="e.g., 11"
+                  />
+                  <p className="text-xs text-white/60 mt-1">
+                    Guide pulley (jockey wheel)
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-white/90 text-sm font-medium mb-2">
+                    Lower Pulley Teeth
+                  </label>
+                  <input
+                    type="number"
+                    step="1"
+                    min="1"
+                    value={lowerPulleyTeeth}
+                    onChange={(e) => setLowerPulleyTeeth(e.target.value)}
+                    className="w-full px-3 py-2 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    placeholder="e.g., 11"
+                  />
+                  <p className="text-xs text-white/60 mt-1">
+                    Tension pulley
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -211,14 +233,15 @@ const ChainLengthCalculator: React.FC<ChainLengthCalculatorProps> = () => {
               <div>
                 <h3 className="text-lg font-semibold text-white mb-3">Chain Length Formula</h3>
                 <div className="bg-black/20 p-4 rounded-lg font-mono text-white/90 text-center">
-                  L = 2C + (F + R + 2P)/4 + 1
+                  L = 2C + (F + R + Pu + Pl)/4 + 1
                 </div>
                 <div className="mt-3 text-sm text-white/80 space-y-1">
                   <p><strong>L</strong> = Chain length (inches)</p>
                   <p><strong>C</strong> = Chainstay length (inches)</p>
                   <p><strong>F</strong> = Teeth on largest chainring</p>
                   <p><strong>R</strong> = Teeth on largest cassette cog</p>
-                  <p><strong>P</strong> = Teeth on derailleur pulleys</p>
+                  <p><strong>Pu</strong> = Teeth on upper pulley (guide/jockey wheel)</p>
+                  <p><strong>Pl</strong> = Teeth on lower pulley (tension pulley)</p>
                 </div>
               </div>
 
@@ -231,7 +254,7 @@ const ChainLengthCalculator: React.FC<ChainLengthCalculatorProps> = () => {
                   </div>
                   <div className="flex items-start">
                     <span className="text-blue-400 mr-2">•</span>
-                    <p><strong>(F + R + 2P)/4:</strong> Calculates additional length needed to wrap around the largest chainring, cassette cog, and both derailleur pulleys</p>
+                    <p><strong>(F + R + Pu + Pl)/4:</strong> Calculates additional length needed to wrap around the largest chainring, cassette cog, upper pulley, and lower pulley</p>
                   </div>
                   <div className="flex items-start">
                     <span className="text-blue-400 mr-2">•</span>
@@ -271,7 +294,11 @@ const ChainLengthCalculator: React.FC<ChainLengthCalculatorProps> = () => {
                   </div>
                   <div className="flex items-start">
                     <span className="text-green-400 mr-2">💡</span>
-                    <p>Most modern derailleur pulleys have 11 teeth, but verify on your specific derailleur</p>
+                    <p>Most modern derailleur pulleys have 11 teeth each, but some have different sizes (e.g., 11T upper, 13T lower)</p>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="text-green-400 mr-2">💡</span>
+                    <p>High-end derailleurs may have oversized pulleys (12T, 14T, or larger) for improved shifting</p>
                   </div>
                 </div>
               </div>

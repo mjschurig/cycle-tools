@@ -9,7 +9,8 @@ export interface ChainLengthInputs {
   chainstayLength: number // in inches
   largestChainring: number // number of teeth
   largestCassette: number // number of teeth
-  pulleyTeeth: number // number of teeth on derailleur pulleys
+  upperPulleyTeeth: number // number of teeth on upper derailleur pulley
+  lowerPulleyTeeth: number // number of teeth on lower derailleur pulley
 }
 
 export interface ChainLengthResult {
@@ -27,22 +28,23 @@ export interface ChainLengthResult {
 /**
  * Calculate chain length using the standard bicycle chain length formula
  * 
- * Formula: L = 2C + (F + R + 2P)/4 + 1
+ * Formula: L = 2C + (F + R + Pu + Pl)/4 + 1
  * Where:
  * - L = Chain length (inches)
  * - C = Chainstay length (inches)
  * - F = Teeth on largest chainring
  * - R = Teeth on largest cassette cog
- * - P = Teeth on derailleur pulleys
+ * - Pu = Teeth on upper derailleur pulley
+ * - Pl = Teeth on lower derailleur pulley
  * 
  * @param inputs - Chain length calculation inputs
  * @returns Chain length calculation results
  */
 export function calculateChainLength(inputs: ChainLengthInputs): ChainLengthResult {
-  const { chainstayLength, largestChainring, largestCassette, pulleyTeeth } = inputs
+  const { chainstayLength, largestChainring, largestCassette, upperPulleyTeeth, lowerPulleyTeeth } = inputs
 
   // Validate inputs
-  if (chainstayLength <= 0 || largestChainring <= 0 || largestCassette <= 0 || pulleyTeeth <= 0) {
+  if (chainstayLength <= 0 || largestChainring <= 0 || largestCassette <= 0 || upperPulleyTeeth <= 0 || lowerPulleyTeeth <= 0) {
     throw new Error('All input values must be positive numbers')
   }
 
@@ -54,9 +56,13 @@ export function calculateChainLength(inputs: ChainLengthInputs): ChainLengthResu
     throw new Error('Chainring or cassette teeth count seems too large (>60). Please verify your input.')
   }
 
+  if (upperPulleyTeeth > 20 || lowerPulleyTeeth > 20) {
+    throw new Error('Pulley teeth count seems too large (>20). Please verify your input.')
+  }
+
   // Calculate components
   const chainstayComponent = 2 * chainstayLength
-  const drivetrainComponent = (largestChainring + largestCassette + 2 * pulleyTeeth) / 4
+  const drivetrainComponent = (largestChainring + largestCassette + upperPulleyTeeth + lowerPulleyTeeth) / 4
   const slackComponent = 1
 
   // Total chain length
@@ -69,7 +75,7 @@ export function calculateChainLength(inputs: ChainLengthInputs): ChainLengthResu
   const numberOfLinks = Math.ceil(chainLengthInches / 0.5)
 
   // Generate formula string
-  const formula = `L = 2(${chainstayLength}) + (${largestChainring} + ${largestCassette} + 2(${pulleyTeeth}))/4 + 1 = ${chainLengthInches.toFixed(2)} inches`
+  const formula = `L = 2(${chainstayLength}) + (${largestChainring} + ${largestCassette} + ${upperPulleyTeeth} + ${lowerPulleyTeeth})/4 + 1 = ${chainLengthInches.toFixed(2)} inches`
 
   return {
     chainLengthInches,

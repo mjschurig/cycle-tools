@@ -7,6 +7,7 @@ import Footer from './components/Footer'
 import BikeAccelerationCalculator from './components/tools/BikeAccelerationCalculator'
 import MomentOfInertiaCalculator from './components/tools/MomentOfInertiaCalculator'
 import SpokeCalculator from './components/tools/SpokeCalculator'
+import ChainLengthCalculator from './components/tools/ChainLengthCalculator'
 
 function App() {
   const [activeSection, setActiveSection] = useState('home')
@@ -28,7 +29,8 @@ function App() {
         )}
         {activeSection === 'moment-of-inertia' && <MomentOfInertiaCalculator />}
         {activeSection === 'spoke-length' && <SpokeCalculator />}
-        {activeSection !== 'home' && activeSection !== 'bike-acceleration' && activeSection !== 'moment-of-inertia' && activeSection !== 'spoke-length' && (
+        {activeSection === 'chain-length' && <ChainLengthCalculator />}
+        {activeSection !== 'home' && activeSection !== 'bike-acceleration' && activeSection !== 'moment-of-inertia' && activeSection !== 'spoke-length' && activeSection !== 'chain-length' && (
           <div className="max-w-4xl mx-auto px-4 py-16 min-h-[60vh] flex flex-col items-center justify-center text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white drop-shadow-lg">
               {getSectionTitle(activeSection)}
@@ -54,7 +56,8 @@ function getSectionTitle(section: string): string {
     'cadence': 'Cadence Calculator',
     'bike-acceleration': 'Bike Acceleration Calculator',
     'moment-of-inertia': 'Moment of Inertia Calculator',
-    'spoke-length': 'Spoke Length Calculator'
+    'spoke-length': 'Spoke Length Calculator',
+    'chain-length': 'Chain Length Calculator'
   }
   return titles[section] || 'Cycle Tools'
 }

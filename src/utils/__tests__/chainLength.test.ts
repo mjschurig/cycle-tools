@@ -21,12 +21,13 @@ describe('Chain Length Calculator', () => {
         chainstayLength: 16.0,
         largestChainring: 50,
         largestCassette: 28,
-        pulleyTeeth: 11
+        upperPulleyTeeth: 11,
+        lowerPulleyTeeth: 11
       }
 
       const result = calculateChainLength(inputs)
 
-      // Expected: L = 2(16) + (50 + 28 + 2(11))/4 + 1 = 32 + 25 + 1 = 58
+      // Expected: L = 2(16) + (50 + 28 + 11 + 11)/4 + 1 = 32 + 25 + 1 = 58
       expect(result.chainLengthInches).toBeCloseTo(58.0, 2)
       expect(result.numberOfLinks).toBe(116) // 58 / 0.5 = 116
       expect(result.chainLengthMm).toBeCloseTo(1473.2, 1)
@@ -37,12 +38,13 @@ describe('Chain Length Calculator', () => {
         chainstayLength: 17.5,
         largestChainring: 42,
         largestCassette: 36,
-        pulleyTeeth: 12
+        upperPulleyTeeth: 12,
+        lowerPulleyTeeth: 12
       }
 
       const result = calculateChainLength(inputs)
 
-      // Expected: L = 2(17.5) + (42 + 36 + 2(12))/4 + 1 = 35 + 25.5 + 1 = 61.5
+      // Expected: L = 2(17.5) + (42 + 36 + 12 + 12)/4 + 1 = 35 + 25.5 + 1 = 61.5
       expect(result.chainLengthInches).toBeCloseTo(61.5, 2)
       expect(result.numberOfLinks).toBe(123) // ceil(61.5 / 0.5) = 123
     })
@@ -52,12 +54,13 @@ describe('Chain Length Calculator', () => {
         chainstayLength: 16.8,
         largestChainring: 46,
         largestCassette: 40,
-        pulleyTeeth: 11
+        upperPulleyTeeth: 11,
+        lowerPulleyTeeth: 11
       }
 
       const result = calculateChainLength(inputs)
 
-      // Expected: L = 2(16.8) + (46 + 40 + 2(11))/4 + 1 = 33.6 + 27 + 1 = 61.6
+      // Expected: L = 2(16.8) + (46 + 40 + 11 + 11)/4 + 1 = 33.6 + 27 + 1 = 61.6
       expect(result.chainLengthInches).toBeCloseTo(61.6, 2)
       expect(result.numberOfLinks).toBe(124) // ceil(61.6 / 0.5) = 124
     })
@@ -67,12 +70,13 @@ describe('Chain Length Calculator', () => {
         chainstayLength: 15.0,
         largestChainring: 34,
         largestCassette: 25,
-        pulleyTeeth: 11
+        upperPulleyTeeth: 11,
+        lowerPulleyTeeth: 11
       }
 
       const result = calculateChainLength(inputs)
 
-      // Expected: L = 2(15) + (34 + 25 + 2(11))/4 + 1 = 30 + 20.25 + 1 = 51.25
+      // Expected: L = 2(15) + (34 + 25 + 11 + 11)/4 + 1 = 30 + 20.25 + 1 = 51.25
       expect(result.chainLengthInches).toBeCloseTo(51.25, 2)
       expect(result.numberOfLinks).toBe(103) // ceil(51.25 / 0.5) = 103
     })
@@ -82,12 +86,13 @@ describe('Chain Length Calculator', () => {
         chainstayLength: 18.0,
         largestChainring: 53,
         largestCassette: 32,
-        pulleyTeeth: 11
+        upperPulleyTeeth: 11,
+        lowerPulleyTeeth: 11
       }
 
       const result = calculateChainLength(inputs)
 
-      // Expected: L = 2(18) + (53 + 32 + 2(11))/4 + 1 = 36 + 26.75 + 1 = 63.75
+      // Expected: L = 2(18) + (53 + 32 + 11 + 11)/4 + 1 = 36 + 26.75 + 1 = 63.75
       expect(result.chainLengthInches).toBeCloseTo(63.75, 2)
       expect(result.numberOfLinks).toBe(128) // ceil(63.75 / 0.5) = 128
     })
@@ -97,13 +102,14 @@ describe('Chain Length Calculator', () => {
         chainstayLength: 16.0,
         largestChainring: 50,
         largestCassette: 28,
-        pulleyTeeth: 11
+        upperPulleyTeeth: 11,
+        lowerPulleyTeeth: 11
       }
 
       const result = calculateChainLength(inputs)
 
       expect(result.breakdown.chainstayComponent).toBe(32.0) // 2 * 16
-      expect(result.breakdown.drivetrainComponent).toBe(25.0) // (50 + 28 + 22) / 4
+      expect(result.breakdown.drivetrainComponent).toBe(25.0) // (50 + 28 + 11 + 11) / 4
       expect(result.breakdown.slackComponent).toBe(1.0)
     })
 
@@ -112,13 +118,14 @@ describe('Chain Length Calculator', () => {
         chainstayLength: 16.0,
         largestChainring: 50,
         largestCassette: 28,
-        pulleyTeeth: 11
+        upperPulleyTeeth: 11,
+        lowerPulleyTeeth: 11
       }
 
       const result = calculateChainLength(inputs)
 
       expect(result.formula).toContain('L = 2(16)')
-      expect(result.formula).toContain('(50 + 28 + 2(11))/4')
+      expect(result.formula).toContain('(50 + 28 + 11 + 11)/4')
       expect(result.formula).toContain('58.00 inches')
     })
   })
@@ -129,7 +136,8 @@ describe('Chain Length Calculator', () => {
         chainstayLength: -1,
         largestChainring: 50,
         largestCassette: 28,
-        pulleyTeeth: 11
+        upperPulleyTeeth: 11,
+        lowerPulleyTeeth: 11
       }
 
       expect(() => calculateChainLength(inputs)).toThrow('All input values must be positive numbers')
@@ -140,7 +148,8 @@ describe('Chain Length Calculator', () => {
         chainstayLength: 16,
         largestChainring: 0,
         largestCassette: 28,
-        pulleyTeeth: 11
+        upperPulleyTeeth: 11,
+        lowerPulleyTeeth: 11
       }
 
       expect(() => calculateChainLength(inputs)).toThrow('All input values must be positive numbers')
@@ -151,7 +160,8 @@ describe('Chain Length Calculator', () => {
         chainstayLength: 35,
         largestChainring: 50,
         largestCassette: 28,
-        pulleyTeeth: 11
+        upperPulleyTeeth: 11,
+        lowerPulleyTeeth: 11
       }
 
       expect(() => calculateChainLength(inputs)).toThrow('Chainstay length seems too large')
@@ -162,10 +172,55 @@ describe('Chain Length Calculator', () => {
         chainstayLength: 16,
         largestChainring: 70,
         largestCassette: 28,
-        pulleyTeeth: 11
+        upperPulleyTeeth: 11,
+        lowerPulleyTeeth: 11
       }
 
       expect(() => calculateChainLength(inputs)).toThrow('Chainring or cassette teeth count seems too large')
+    })
+
+    test('should throw error for excessive pulley teeth', () => {
+      const inputs: ChainLengthInputs = {
+        chainstayLength: 16,
+        largestChainring: 50,
+        largestCassette: 28,
+        upperPulleyTeeth: 25,
+        lowerPulleyTeeth: 11
+      }
+
+      expect(() => calculateChainLength(inputs)).toThrow('Pulley teeth count seems too large')
+    })
+
+    test('should handle different sized pulleys', () => {
+      const inputs: ChainLengthInputs = {
+        chainstayLength: 16.5,
+        largestChainring: 50,
+        largestCassette: 32,
+        upperPulleyTeeth: 11,
+        lowerPulleyTeeth: 14 // Oversized lower pulley
+      }
+
+      const result = calculateChainLength(inputs)
+
+      // Expected: L = 2(16.5) + (50 + 32 + 11 + 14)/4 + 1 = 33 + 26.75 + 1 = 60.75
+      expect(result.chainLengthInches).toBeCloseTo(60.75, 2)
+      expect(result.numberOfLinks).toBe(122) // ceil(60.75 / 0.5) = 122
+    })
+
+    test('should handle oversized pulleys setup', () => {
+      const inputs: ChainLengthInputs = {
+        chainstayLength: 17.0,
+        largestChainring: 52,
+        largestCassette: 36,
+        upperPulleyTeeth: 12,
+        lowerPulleyTeeth: 16 // Large oversized pulley
+      }
+
+      const result = calculateChainLength(inputs)
+
+      // Expected: L = 2(17) + (52 + 36 + 12 + 16)/4 + 1 = 34 + 29 + 1 = 64
+      expect(result.chainLengthInches).toBeCloseTo(64.0, 2)
+      expect(result.numberOfLinks).toBe(128) // ceil(64 / 0.5) = 128
     })
   })
 
@@ -196,7 +251,8 @@ describe('Chain Length Calculator', () => {
         chainstayLength: 16.0,
         largestChainring: 50,
         largestCassette: 28,
-        pulleyTeeth: 11
+        upperPulleyTeeth: 11,
+        lowerPulleyTeeth: 11
       }
 
       const baseResult = calculateChainLength(inputs)
@@ -211,7 +267,8 @@ describe('Chain Length Calculator', () => {
         chainstayLength: 16.0,
         largestChainring: 50,
         largestCassette: 28,
-        pulleyTeeth: 11
+        upperPulleyTeeth: 11,
+        lowerPulleyTeeth: 11
       }
 
       const baseResult = calculateChainLength(inputs)
@@ -229,12 +286,13 @@ describe('Chain Length Calculator', () => {
         chainstayLength: 16.0,
         largestChainring: 50,
         largestCassette: 28,
-        pulleyTeeth: 11
+        upperPulleyTeeth: 11,
+        lowerPulleyTeeth: 11
       }
 
       const result = calculateChainLength(inputs)
       
-      // Expected from formula: 2*16 + (50+28+22)/4 + 1 = 32 + 25 + 1 = 58
+      // Expected from formula: 2*16 + (50+28+11+11)/4 + 1 = 32 + 25 + 1 = 58
       expect(result.chainLengthInches).toBeCloseTo(58.0, 1)
     })
 
@@ -244,12 +302,13 @@ describe('Chain Length Calculator', () => {
         chainstayLength: 17.5,
         largestChainring: 53,
         largestCassette: 30,
-        pulleyTeeth: 11
+        upperPulleyTeeth: 11,
+        lowerPulleyTeeth: 11
       }
 
       const result = calculateChainLength(inputs)
       
-      // Expected from formula: 2*17.5 + (53+30+22)/4 + 1 = 35 + 26.25 + 1 = 62.25
+      // Expected from formula: 2*17.5 + (53+30+11+11)/4 + 1 = 35 + 26.25 + 1 = 62.25
       expect(result.chainLengthInches).toBeCloseTo(62.25, 1)
     })
 
@@ -259,12 +318,13 @@ describe('Chain Length Calculator', () => {
         chainstayLength: 15.0,
         largestChainring: 48,
         largestCassette: 25,
-        pulleyTeeth: 11
+        upperPulleyTeeth: 11,
+        lowerPulleyTeeth: 11
       }
 
       const result = calculateChainLength(inputs)
       
-      // Expected from formula: 2*15 + (48+25+22)/4 + 1 = 30 + 23.75 + 1 = 54.75
+      // Expected from formula: 2*15 + (48+25+11+11)/4 + 1 = 30 + 23.75 + 1 = 54.75
       expect(result.chainLengthInches).toBeCloseTo(54.75, 1)
     })
 
@@ -274,26 +334,44 @@ describe('Chain Length Calculator', () => {
         chainstayLength: 17.0,
         largestChainring: 32,
         largestCassette: 50,
-        pulleyTeeth: 12
+        upperPulleyTeeth: 12,
+        lowerPulleyTeeth: 12
       }
 
       const result = calculateChainLength(inputs)
       
-      // Expected from formula: 2*17 + (32+50+24)/4 + 1 = 34 + 26.5 + 1 = 61.5
+      // Expected from formula: 2*17 + (32+50+12+12)/4 + 1 = 34 + 26.5 + 1 = 61.5
       expect(result.chainLengthInches).toBeCloseTo(61.5, 1)
     })
 
-    test('Test Case 5: Single speed conversion', () => {
+    test('Test Case 5: Single speed conversion (should error)', () => {
       // Chainstay: 16.5", Chainring: 42T, Cassette: 16T, No pulleys (0T)
       const inputs: ChainLengthInputs = {
         chainstayLength: 16.5,
         largestChainring: 42,
         largestCassette: 16,
-        pulleyTeeth: 0 // Single speed has no derailleur pulleys
+        upperPulleyTeeth: 0, // Single speed has no derailleur pulleys
+        lowerPulleyTeeth: 0
       }
 
       // This should throw an error due to 0 pulley teeth
       expect(() => calculateChainLength(inputs)).toThrow('All input values must be positive numbers')
+    })
+
+    test('Test Case 6: Mixed pulley sizes', () => {
+      // Chainstay: 16.5", Chainring: 50T, Cassette: 34T, Upper: 11T, Lower: 13T
+      const inputs: ChainLengthInputs = {
+        chainstayLength: 16.5,
+        largestChainring: 50,
+        largestCassette: 34,
+        upperPulleyTeeth: 11,
+        lowerPulleyTeeth: 13
+      }
+
+      const result = calculateChainLength(inputs)
+      
+      // Expected from formula: 2*16.5 + (50+34+11+13)/4 + 1 = 33 + 27 + 1 = 61
+      expect(result.chainLengthInches).toBeCloseTo(61.0, 1)
     })
   })
 
@@ -303,7 +381,8 @@ describe('Chain Length Calculator', () => {
         chainstayLength: 12.0, // Very short chainstay
         largestChainring: 28,  // Small chainring
         largestCassette: 16,   // Small cassette
-        pulleyTeeth: 9         // Small pulleys
+        upperPulleyTeeth: 9,   // Small pulleys
+        lowerPulleyTeeth: 9
       }
 
       const result = calculateChainLength(inputs)
@@ -318,7 +397,8 @@ describe('Chain Length Calculator', () => {
         chainstayLength: 20.0, // Long chainstay
         largestChainring: 56,  // Large chainring
         largestCassette: 42,   // Large cassette
-        pulleyTeeth: 14        // Large pulleys
+        upperPulleyTeeth: 14,  // Large pulleys
+        lowerPulleyTeeth: 14
       }
 
       const result = calculateChainLength(inputs)
@@ -333,7 +413,8 @@ describe('Chain Length Calculator', () => {
         chainstayLength: 16.25,
         largestChainring: 50,
         largestCassette: 28,
-        pulleyTeeth: 11
+        upperPulleyTeeth: 11,
+        lowerPulleyTeeth: 11
       }
 
       const result = calculateChainLength(inputs)

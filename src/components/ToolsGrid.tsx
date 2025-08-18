@@ -72,6 +72,14 @@ const ToolsGrid: React.FC<ToolsGridProps> = ({ setActiveSection }) => {
       features: ['ERD & Hub Specs', 'Cross Patterns', 'Wheel Building'],
       featured: true,
     },
+    {
+      id: 'chain-length',
+      title: 'Chain Length Calculator',
+      description: 'Calculate optimal chain length for your drivetrain with different pulley sizes',
+      icon: '🔗',
+      features: ['Chainstay Length', 'Pulley Wheels', 'Drivetrain Specs'],
+      featured: true,
+    },
   ]
 
   return (
