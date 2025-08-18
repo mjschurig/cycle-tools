@@ -7,48 +7,48 @@ interface CdAResult {
   formula: string
 }
 
+// Reference values and constants
+const REFERENCE_HEIGHT = 178 // cm
+const REFERENCE_WEIGHT = 75 // kg
+const REFERENCE_BMI = 23
+
+// CdA reference values for different bike types (midpoint of ranges)
+const CDA_REFERENCE = {
+  'triathlon': 0.215,     // 0.20-0.23
+  'road-aero': 0.245,     // 0.23-0.26
+  'road-drops': 0.295,    // 0.28-0.31
+  'endurance': 0.35       // 0.32-0.38
+}
+
+// Bike type offsets relative to road drops position
+const BIKE_OFFSETS = {
+  'triathlon': -0.065,    // -0.05 to -0.08, using -0.065
+  'road-aero': -0.04,     // -0.03 to -0.05, using -0.04
+  'road-drops': 0,        // baseline
+  'endurance': 0.03       // +0.02 to +0.04, using +0.03
+}
+
+const bikeTypes = [
+  { id: 'triathlon', name: 'Triathlon bike, full aero tuck', range: '0.20 – 0.23' },
+  { id: 'road-aero', name: 'Road race bike + clip-on aero bars', range: '0.23 – 0.26' },
+  { id: 'road-drops', name: 'Road race bike, drops position', range: '0.28 – 0.31' },
+  { id: 'endurance', name: 'Road endurance / winter bike, tops', range: '0.32 – 0.38' }
+]
+
+const methods = [
+  { id: 'lookup', name: 'Quick Look-Up Table' },
+  { id: 'height', name: 'Height-Scaled Rule-of-Thumb' },
+  { id: 'weight', name: 'Weight Adjustment' },
+  { id: 'bmi', name: 'BMI Adjustment' },
+  { id: 'combined', name: 'Combined Height + Weight/BMI' },
+  { id: 'offset', name: 'Bike-Type Offset Method' }
+]
+
 const CdACalculator: React.FC = () => {
   const [height, setHeight] = useState<string>('')
   const [weight, setWeight] = useState<string>('')
   const [bikeType, setBikeType] = useState<string>('triathlon')
   const [method, setMethod] = useState<string>('lookup')
-
-  // Reference values and constants
-  const REFERENCE_HEIGHT = 178 // cm
-  const REFERENCE_WEIGHT = 75 // kg
-  const REFERENCE_BMI = 23
-
-  // CdA reference values for different bike types (midpoint of ranges)
-  const CDA_REFERENCE = {
-    'triathlon': 0.215,     // 0.20-0.23
-    'road-aero': 0.245,     // 0.23-0.26
-    'road-drops': 0.295,    // 0.28-0.31
-    'endurance': 0.35       // 0.32-0.38
-  }
-
-  // Bike type offsets relative to road drops position
-  const BIKE_OFFSETS = {
-    'triathlon': -0.065,    // -0.05 to -0.08, using -0.065
-    'road-aero': -0.04,     // -0.03 to -0.05, using -0.04
-    'road-drops': 0,        // baseline
-    'endurance': 0.03       // +0.02 to +0.04, using +0.03
-  }
-
-  const bikeTypes = [
-    { id: 'triathlon', name: 'Triathlon bike, full aero tuck', range: '0.20 – 0.23' },
-    { id: 'road-aero', name: 'Road race bike + clip-on aero bars', range: '0.23 – 0.26' },
-    { id: 'road-drops', name: 'Road race bike, drops position', range: '0.28 – 0.31' },
-    { id: 'endurance', name: 'Road endurance / winter bike, tops', range: '0.32 – 0.38' }
-  ]
-
-  const methods = [
-    { id: 'lookup', name: 'Quick Look-Up Table' },
-    { id: 'height', name: 'Height-Scaled Rule-of-Thumb' },
-    { id: 'weight', name: 'Weight Adjustment' },
-    { id: 'bmi', name: 'BMI Adjustment' },
-    { id: 'combined', name: 'Combined Height + Weight/BMI' },
-    { id: 'offset', name: 'Bike-Type Offset Method' }
-  ]
 
   // Auto-calculate BMI
   const bmi = useMemo(() => {
@@ -78,37 +78,41 @@ const CdACalculator: React.FC = () => {
         formula = `CdA = ${cda.toFixed(3)} m² (reference value)`
         break
 
-      case 'height':
+      case 'height': {
         const heightFactor = Math.pow(h / REFERENCE_HEIGHT, 2)
         cda = CDA_REFERENCE[bikeType as keyof typeof CDA_REFERENCE] * heightFactor
         methodDescription = 'Height-Scaled Rule-of-Thumb: Adjusts reference CdA based on height squared scaling.'
         formula = `CdA = ${CDA_REFERENCE[bikeType as keyof typeof CDA_REFERENCE].toFixed(3)} × (${h}/${REFERENCE_HEIGHT})² = ${cda.toFixed(3)} m²`
         break
+      }
 
-      case 'weight':
+      case 'weight': {
         const weightFactor = Math.pow(w / REFERENCE_WEIGHT, 0.3)
         cda = CDA_REFERENCE[bikeType as keyof typeof CDA_REFERENCE] * weightFactor
         methodDescription = 'Weight Adjustment: Adjusts reference CdA based on weight with 0.3 exponent.'
         formula = `CdA = ${CDA_REFERENCE[bikeType as keyof typeof CDA_REFERENCE].toFixed(3)} × (${w}/${REFERENCE_WEIGHT})^0.3 = ${cda.toFixed(3)} m²`
         break
+      }
 
-      case 'bmi':
+      case 'bmi': {
         if (!bmi) return null
         const bmiFactor = Math.pow(bmi / REFERENCE_BMI, 0.3)
         cda = CDA_REFERENCE[bikeType as keyof typeof CDA_REFERENCE] * bmiFactor
         methodDescription = 'BMI Adjustment: Adjusts reference CdA based on BMI with 0.3 exponent.'
         formula = `CdA = ${CDA_REFERENCE[bikeType as keyof typeof CDA_REFERENCE].toFixed(3)} × (${bmi.toFixed(1)}/${REFERENCE_BMI})^0.3 = ${cda.toFixed(3)} m²`
         break
+      }
 
-      case 'combined':
+      case 'combined': {
         const heightFactorComb = Math.pow(h / REFERENCE_HEIGHT, 2)
         const weightFactorComb = Math.pow(w / REFERENCE_WEIGHT, 0.3)
         cda = CDA_REFERENCE[bikeType as keyof typeof CDA_REFERENCE] * heightFactorComb * weightFactorComb
         methodDescription = 'Combined Height + Weight: Applies both height squared and weight 0.3 scaling factors.'
         formula = `CdA = ${CDA_REFERENCE[bikeType as keyof typeof CDA_REFERENCE].toFixed(3)} × (${h}/${REFERENCE_HEIGHT})² × (${w}/${REFERENCE_WEIGHT})^0.3 = ${cda.toFixed(3)} m²`
         break
+      }
 
-      case 'offset':
+      case 'offset': {
         // Start with road drops baseline and apply offset
         const baselineCdA = CDA_REFERENCE['road-drops']
         const heightFactorOffset = Math.pow(h / REFERENCE_HEIGHT, 2)
@@ -118,6 +122,7 @@ const CdACalculator: React.FC = () => {
         methodDescription = 'Bike-Type Offset Method: Starts with road drops baseline, adjusts for rider dimensions, then applies bike-specific offset.'
         formula = `CdA = (${baselineCdA.toFixed(3)} × height_factor × weight_factor) + ${BIKE_OFFSETS[bikeType as keyof typeof BIKE_OFFSETS].toFixed(3)} = ${cda.toFixed(3)} m²`
         break
+      }
     }
 
     return {

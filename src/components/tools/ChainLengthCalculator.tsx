@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 
 interface ChainLengthCalculatorProps {}
 
@@ -12,12 +12,7 @@ const ChainLengthCalculator: React.FC<ChainLengthCalculatorProps> = () => {
   const [result, setResult] = useState<number | null>(null)
   const [chainLinks, setChainLinks] = useState<number | null>(null)
 
-  // Calculate chain length whenever inputs change
-  useEffect(() => {
-    calculateChainLength()
-  }, [chainstayLength, largestChainring, largestCassette, upperPulleyTeeth, lowerPulleyTeeth, unit])
-
-  const calculateChainLength = () => {
+  const calculateChainLength = useCallback(() => {
     const C = parseFloat(chainstayLength)
     const F = parseFloat(largestChainring)
     const R = parseFloat(largestCassette)
@@ -45,7 +40,12 @@ const ChainLengthCalculator: React.FC<ChainLengthCalculatorProps> = () => {
     // Calculate number of links (each link is 0.5 inches)
     const links = Math.ceil(chainLengthInches / 0.5)
     setChainLinks(links)
-  }
+  }, [chainstayLength, largestChainring, largestCassette, upperPulleyTeeth, lowerPulleyTeeth, unit])
+
+  // Calculate chain length whenever inputs change
+  useEffect(() => {
+    calculateChainLength()
+  }, [calculateChainLength])
 
   const formatResult = (value: number) => {
     if (unit === 'mm') {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { WheelSize, COMMON_WHEEL_SIZES } from '../utils/wheelSizes';
+import { COMMON_WHEEL_SIZES } from '../utils/wheelSizes';
 
 interface WheelDiameterSelectorProps {
   selectedDiameter: number;
