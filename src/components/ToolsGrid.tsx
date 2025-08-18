@@ -64,6 +64,14 @@ const ToolsGrid: React.FC<ToolsGridProps> = ({ setActiveSection }) => {
       icon: '🔄',
       features: ['RPM Optimization', 'Efficiency Zones', 'Training Guide'],
     },
+    {
+      id: 'spoke-length',
+      title: 'Spoke Length Calculator',
+      description: 'Calculate precise spoke lengths for bicycle wheel building',
+      icon: '🛞',
+      features: ['ERD & Hub Specs', 'Cross Patterns', 'Wheel Building'],
+      featured: true,
+    },
   ]
 
   return (
