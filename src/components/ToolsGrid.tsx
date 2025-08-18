@@ -72,6 +72,14 @@ const ToolsGrid: React.FC<ToolsGridProps> = ({ setActiveSection }) => {
       features: ['ERD & Hub Specs', 'Cross Patterns', 'Wheel Building'],
       featured: true,
     },
+    {
+      id: 'cda-calculator',
+      title: 'CdA Drag Coefficient Estimator',
+      description: 'Calculate aerodynamic drag area based on rider dimensions and bike setup',
+      icon: '💨',
+      features: ['Multiple Methods', 'Bike Type Analysis', 'Performance Categories'],
+      featured: true,
+    },
   ]
 
   return (
