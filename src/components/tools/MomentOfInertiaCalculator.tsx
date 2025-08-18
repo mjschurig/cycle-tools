@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import WheelDiameterSelector from '../WheelDiameterSelector';
+import Warning from '../Warning';
 
 interface InputFieldProps {
   label: string;
@@ -137,6 +138,7 @@ const MomentOfInertiaCalculator: React.FC = () => {
           Calculate the rotational moment of inertia for bicycle wheels. 
           Essential for accurate bike acceleration modeling and performance analysis.
         </p>
+        <Warning message="Estimation, based on assuming equally distributed weight in the rim, tire and spokes." />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -239,7 +241,7 @@ const MomentOfInertiaCalculator: React.FC = () => {
             <div className="space-y-4">
               {/* Rim Results */}
               <div className="bg-white/10 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-white mb-3">Rim (Felge)</h3>
+                <h3 className="text-lg font-semibold text-white mb-3">Rim</h3>
                 <div className="space-y-2 text-white/90 text-sm">
                   <div className="flex justify-between">
                     <span>Center Distance:</span>
@@ -254,7 +256,7 @@ const MomentOfInertiaCalculator: React.FC = () => {
 
               {/* Tire Results */}
               <div className="bg-white/10 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-white mb-3">Tire (Reifen)</h3>
+                <h3 className="text-lg font-semibold text-white mb-3">Tire</h3>
                 <div className="space-y-2 text-white/90 text-sm">
                   <div className="flex justify-between">
                     <span>Center Distance:</span>
@@ -269,7 +271,7 @@ const MomentOfInertiaCalculator: React.FC = () => {
 
               {/* Spokes Results */}
               <div className="bg-white/10 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-white mb-3">Spokes (Speichen)</h3>
+                <h3 className="text-lg font-semibold text-white mb-3">Spokes</h3>
                 <div className="space-y-2 text-white/90 text-sm">
                   <div className="flex justify-between">
                     <span>Moment of Inertia:</span>
@@ -340,31 +342,6 @@ const MomentOfInertiaCalculator: React.FC = () => {
                 <div>• m = mass (kg), r = radius (m)</div>
                 <div>• D = rim diameter, H = rim height</div>
                 <div>• Factor of 2 accounts for both wheels</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Typical Values */}
-          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-            <h2 className="text-2xl font-bold text-white mb-4">Typical Values</h2>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <h3 className="font-semibold text-white mb-2">Road Wheels:</h3>
-                <div className="space-y-1 text-white/80">
-                  <div>Rim: 300-500g</div>
-                  <div>Tire: 200-300g</div>
-                  <div>Spokes: 150-250g</div>
-                  <div>I ≈ 0.08-0.12 kg⋅m²</div>
-                </div>
-              </div>
-              <div>
-                <h3 className="font-semibold text-white mb-2">Mountain Wheels:</h3>
-                <div className="space-y-1 text-white/80">
-                  <div>Rim: 400-600g</div>
-                  <div>Tire: 600-1000g</div>
-                  <div>Spokes: 200-300g</div>
-                  <div>I ≈ 0.12-0.18 kg⋅m²</div>
-                </div>
               </div>
             </div>
           </div>

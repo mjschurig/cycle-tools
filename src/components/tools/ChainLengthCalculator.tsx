@@ -3,44 +3,44 @@ import React, { useState, useEffect, useCallback } from 'react'
 interface ChainLengthCalculatorProps {}
 
 const ChainLengthCalculator: React.FC<ChainLengthCalculatorProps> = () => {
-  const [chainstayLength, setChainstayLength] = useState<string>('')
-  const [largestChainring, setLargestChainring] = useState<string>('')
-  const [largestCassette, setLargestCassette] = useState<string>('')
-  const [upperPulleyTeeth, setUpperPulleyTeeth] = useState<string>('11') // Default for most derailleurs
-  const [lowerPulleyTeeth, setLowerPulleyTeeth] = useState<string>('11') // Default for most derailleurs
-  const [unit, setUnit] = useState<'inches' | 'mm'>('inches')
+  const [chainstayLength, setChainstayLength] = useState<string>('410')
+  const [largestChainring, setLargestChainring] = useState<string>('53')
+  const [largestCassette, setLargestCassette] = useState<string>('25')
+  const [upperPulleyTeeth, setUpperPulleyTeeth] = useState<string>('11')
+  const [lowerPulleyTeeth, setLowerPulleyTeeth] = useState<string>('11')
   const [result, setResult] = useState<number | null>(null)
   const [chainLinks, setChainLinks] = useState<number | null>(null)
 
   const calculateChainLength = useCallback(() => {
     const C = parseFloat(chainstayLength)
-    const F = parseFloat(largestChainring)
-    const R = parseFloat(largestCassette)
+    const T1 = parseFloat(largestChainring)
+    const T2 = parseFloat(largestCassette)
     const Pu = parseFloat(upperPulleyTeeth)
     const Pl = parseFloat(lowerPulleyTeeth)
 
-    if (isNaN(C) || isNaN(F) || isNaN(R) || isNaN(Pu) || isNaN(Pl) || C <= 0 || F <= 0 || R <= 0 || Pu <= 0 || Pl <= 0) {
+    if (isNaN(C) || isNaN(T1) || isNaN(T2) || isNaN(Pu) || isNaN(Pl) || C <= 0 || T1 <= 0 || T2 <= 0 || Pu <= 0 || Pl <= 0) {
       setResult(null)
       setChainLinks(null)
       return
     }
 
-    let chainstayInches = C
-    if (unit === 'mm') {
-      chainstayInches = C / 25.4 // Convert mm to inches
-    }
+    // Calculate NL (Number of chain Links needed to measure chainstay)
+    // NL = C (mm) / 12.7, rounded up to nearest even integer
+    const NL = C / 12.7
 
-    // Standard chain length formula with separate pulley consideration
-    // L = 2C + (F + R + Pu + Pl)/4 + 1
-    // Where Pu is upper pulley teeth and Pl is lower pulley teeth
-    const chainLengthInches = 2 * chainstayInches + (F + R + Pu + Pl) / 4 + 1
+    // Correct chain length formula:
+    // Chain length = 2 × NL + 1/2 × T1 + 1/2 × T2 + (Pu + Pl - 20)
+    const chainLengthLinks_raw = 2 * NL + 0.5 * T1 + 0.5 * T2 + (Pu + Pl - 20)
 
-    setResult(chainLengthInches)
+    const chainLengthLinks = Math.ceil(chainLengthLinks_raw / 2) * 2
     
-    // Calculate number of links (each link is 0.5 inches)
-    const links = Math.ceil(chainLengthInches / 0.5)
-    setChainLinks(links)
-  }, [chainstayLength, largestChainring, largestCassette, upperPulleyTeeth, lowerPulleyTeeth, unit])
+    // Convert chain length from links to mm (each link is 12.7mm)
+    const chainLengthMm = chainLengthLinks_raw * 12.7
+    setResult(chainLengthMm)
+    
+    // Set the number of links (rounded to nearest integer)
+    setChainLinks(chainLengthLinks)
+  }, [chainstayLength, largestChainring, largestCassette, upperPulleyTeeth, lowerPulleyTeeth])
 
   // Calculate chain length whenever inputs change
   useEffect(() => {
@@ -48,10 +48,7 @@ const ChainLengthCalculator: React.FC<ChainLengthCalculatorProps> = () => {
   }, [calculateChainLength])
 
   const formatResult = (value: number) => {
-    if (unit === 'mm') {
-      return (value * 25.4).toFixed(1)
-    }
-    return value.toFixed(2)
+    return value.toFixed(1)
   }
 
   const resetForm = () => {
@@ -81,42 +78,13 @@ const ChainLengthCalculator: React.FC<ChainLengthCalculatorProps> = () => {
           <div className="backdrop-blur-md bg-white/10 rounded-xl p-6 border border-white/20">
             <h2 className="text-2xl font-bold text-white mb-6">Calculator</h2>
             
-            {/* Unit Selection */}
-            <div className="mb-6">
-              <label className="block text-white/90 text-sm font-medium mb-2">
-                Measurement Unit
-              </label>
-              <div className="flex space-x-4">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="unit"
-                    value="inches"
-                    checked={unit === 'inches'}
-                    onChange={(e) => setUnit(e.target.value as 'inches' | 'mm')}
-                    className="mr-2"
-                  />
-                  <span className="text-white/90">Inches</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="unit"
-                    value="mm"
-                    checked={unit === 'mm'}
-                    onChange={(e) => setUnit(e.target.value as 'inches' | 'mm')}
-                    className="mr-2"
-                  />
-                  <span className="text-white/90">Millimeters</span>
-                </label>
-              </div>
-            </div>
+
 
             {/* Input Fields */}
             <div className="space-y-4">
               <div>
                 <label className="block text-white/90 text-sm font-medium mb-2">
-                  Chainstay Length ({unit})
+                  Chainstay Length - C (mm)
                 </label>
                 <input
                   type="number"
@@ -124,16 +92,16 @@ const ChainLengthCalculator: React.FC<ChainLengthCalculatorProps> = () => {
                   value={chainstayLength}
                   onChange={(e) => setChainstayLength(e.target.value)}
                   className="w-full px-3 py-2 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  placeholder={`Enter chainstay length in ${unit}`}
+                  placeholder="Enter chainstay length in mm"
                 />
                 <p className="text-xs text-white/60 mt-1">
-                  Distance from bottom bracket center to rear axle center
+                  Distance from bottom bracket center to rear axle center (used to calculate NL)
                 </p>
               </div>
 
               <div>
                 <label className="block text-white/90 text-sm font-medium mb-2">
-                  Largest Chainring (teeth)
+                  Largest Chainring - T1 (teeth)
                 </label>
                 <input
                   type="number"
@@ -148,7 +116,7 @@ const ChainLengthCalculator: React.FC<ChainLengthCalculatorProps> = () => {
 
               <div>
                 <label className="block text-white/90 text-sm font-medium mb-2">
-                  Largest Cassette Cog (teeth)
+                  Largest Cassette Cog - T2 (teeth)
                 </label>
                 <input
                   type="number"
@@ -205,13 +173,10 @@ const ChainLengthCalculator: React.FC<ChainLengthCalculatorProps> = () => {
                 <h3 className="text-lg font-semibold text-white mb-2">Results</h3>
                 <div className="space-y-2">
                   <p className="text-white/90">
-                    <span className="font-medium">Chain Length:</span> {formatResult(result)} {unit}
+                    <span className="font-medium">Chain Length:</span> {formatResult(result)} mm
                   </p>
                   <p className="text-white/90">
                     <span className="font-medium">Number of Links:</span> {chainLinks} links
-                  </p>
-                  <p className="text-white/90">
-                    <span className="font-medium">Chain Length (inches):</span> {result.toFixed(2)}"
                   </p>
                 </div>
               </div>
@@ -233,15 +198,16 @@ const ChainLengthCalculator: React.FC<ChainLengthCalculatorProps> = () => {
               <div>
                 <h3 className="text-lg font-semibold text-white mb-3">Chain Length Formula</h3>
                 <div className="bg-black/20 p-4 rounded-lg font-mono text-white/90 text-center">
-                  L = 2C + (F + R + Pu + Pl)/4 + 1
+                  Chain length = 2 × NL + 1/2 × T1 + 1/2 × T2 + (Pu + Pl - 20)
                 </div>
                 <div className="mt-3 text-sm text-white/80 space-y-1">
-                  <p><strong>L</strong> = Chain length (inches)</p>
-                  <p><strong>C</strong> = Chainstay length (inches)</p>
-                  <p><strong>F</strong> = Teeth on largest chainring</p>
-                  <p><strong>R</strong> = Teeth on largest cassette cog</p>
+                  <p><strong>Chain length</strong> = Chain length in links</p>
+                  <p><strong>NL</strong> = Number of chain links needed to measure chainstay = C (mm) / 12.7, rounded up to nearest even integer</p>
+                  <p><strong>T1</strong> = Teeth on largest chainring</p>
+                  <p><strong>T2</strong> = Teeth on largest cassette cog</p>
                   <p><strong>Pu</strong> = Teeth on upper pulley (guide/jockey wheel)</p>
                   <p><strong>Pl</strong> = Teeth on lower pulley (tension pulley)</p>
+                  <p><strong>C</strong> = Chainstay length (mm)</p>
                 </div>
               </div>
 
@@ -250,55 +216,19 @@ const ChainLengthCalculator: React.FC<ChainLengthCalculatorProps> = () => {
                 <div className="space-y-3 text-white/80 text-sm">
                   <div className="flex items-start">
                     <span className="text-blue-400 mr-2">•</span>
-                    <p><strong>2C:</strong> Accounts for the chain running along both the top and bottom of the chainstay</p>
+                    <p><strong>2 × NL:</strong> Accounts for the chain running along both the top and bottom of the chainstay, where NL is the number of chain links needed to span the chainstay</p>
                   </div>
                   <div className="flex items-start">
                     <span className="text-blue-400 mr-2">•</span>
-                    <p><strong>(F + R + Pu + Pl)/4:</strong> Calculates additional length needed to wrap around the largest chainring, cassette cog, upper pulley, and lower pulley</p>
+                    <p><strong>1/2 × T1 + 1/2 × T2:</strong> Adds half the teeth count of the largest chainring and largest cassette cog to account for chain wrap around these components</p>
                   </div>
                   <div className="flex items-start">
                     <span className="text-blue-400 mr-2">•</span>
-                    <p><strong>+1:</strong> Adds extra length for proper derailleur function and smooth shifting</p>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold text-white mb-3">Important Notes</h3>
-                <div className="space-y-2 text-white/80 text-sm">
-                  <div className="flex items-start">
-                    <span className="text-yellow-400 mr-2">⚠️</span>
-                    <p>Always use the largest chainring and largest cassette cog for calculation</p>
+                    <p><strong>(Pu + Pl - 20):</strong> Adjusts for the derailleur pulleys, subtracting 20 as a standard correction factor for typical pulley configurations</p>
                   </div>
                   <div className="flex items-start">
-                    <span className="text-yellow-400 mr-2">⚠️</span>
-                    <p>Chain links come in pairs - round up to the nearest even number if needed</p>
-                  </div>
-                  <div className="flex items-start">
-                    <span className="text-yellow-400 mr-2">⚠️</span>
-                    <p>Consider adding an extra link for easier installation and maintenance</p>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold text-white mb-3">Measurement Tips</h3>
-                <div className="space-y-2 text-white/80 text-sm">
-                  <div className="flex items-start">
-                    <span className="text-green-400 mr-2">💡</span>
-                    <p>Measure chainstay from the center of the bottom bracket to the center of the rear axle</p>
-                  </div>
-                  <div className="flex items-start">
-                    <span className="text-green-400 mr-2">💡</span>
-                    <p>Count teeth carefully - some chainrings have wear indicators that aren't teeth</p>
-                  </div>
-                  <div className="flex items-start">
-                    <span className="text-green-400 mr-2">💡</span>
-                    <p>Most modern derailleur pulleys have 11 teeth each, but some have different sizes (e.g., 11T upper, 13T lower)</p>
-                  </div>
-                  <div className="flex items-start">
-                    <span className="text-green-400 mr-2">💡</span>
-                    <p>High-end derailleurs may have oversized pulleys (12T, 14T, or larger) for improved shifting</p>
+                    <span className="text-blue-400 mr-2">•</span>
+                    <p><strong>Chain pitch:</strong> Each chain link is 12.7mm (0.5 inches), so NL = C (mm) / 12.7, rounded up to the nearest even integer</p>
                   </div>
                 </div>
               </div>

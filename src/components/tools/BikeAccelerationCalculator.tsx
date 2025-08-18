@@ -11,6 +11,7 @@ import {
 import VelocityChart from '../charts/VelocityChart';
 import DistanceChart from '../charts/DistanceChart';
 import PowerAnalysisChart from '../charts/PowerAnalysisChart';
+import Warning from '../Warning';
 
 interface InputFieldProps {
   label: string;
@@ -159,6 +160,7 @@ const BikeAccelerationCalculator: React.FC<BikeAccelerationCalculatorProps> = ({
           Compare bicycle performance for ultra-distance cycling races using differential equation modeling. 
           Analyze the impact of repeated accelerations and complex terrain profiles on race times.
         </p>
+        <Warning message="Not verified formulas, still in development." />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -270,7 +272,7 @@ const BikeAccelerationCalculator: React.FC<BikeAccelerationCalculatorProps> = ({
                   className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white"
                 >
                   {Object.values(BIKE_CONFIGS).map(config => (
-                    <option key={config.name} value={config.name} className="bg-gray-800">
+                    <option key={config.name} value={config.name} className="bg-gray-800 text-white">
                       {config.name}
                     </option>
                   ))}
@@ -287,7 +289,7 @@ const BikeAccelerationCalculator: React.FC<BikeAccelerationCalculatorProps> = ({
                   className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white"
                 >
                   {Object.values(BIKE_CONFIGS).map(config => (
-                    <option key={config.name} value={config.name} className="bg-gray-800">
+                    <option key={config.name} value={config.name} className="bg-gray-800 text-white">
                       {config.name}
                     </option>
                   ))}

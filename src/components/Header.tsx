@@ -13,6 +13,8 @@ const Header: React.FC<HeaderProps> = ({ activeSection, setActiveSection }) => {
     { id: 'bike-acceleration', label: 'Bike Performance' },
     { id: 'moment-of-inertia', label: 'Wheel Inertia' },
     { id: 'spoke-length', label: 'Spoke Calculator' },
+    { id: 'chain-length', label: 'Chain Length' },
+    { id: 'cda-calculator', label: 'CdA Calculator' },
     { id: 'gear-ratio', label: 'Gear Ratio' },
     { id: 'speed', label: 'Speed' },
     { id: 'power', label: 'Power' },

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react'
+import Warning from '../Warning'
 
 interface HubPreset {
   name: string
@@ -127,6 +128,7 @@ const SpokeCalculator: React.FC = () => {
           <p className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto">
             Calculate precise spoke lengths for bicycle wheel building with support for asymmetric spoking patterns and separate left/right side configurations.
           </p>
+          <Warning message="Not verified formulas, still in development." />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -162,9 +164,9 @@ const SpokeCalculator: React.FC = () => {
                 onChange={(e) => handleHubPresetChange(e.target.value)}
                 className="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
               >
-                <option value="">Select a hub preset...</option>
+                <option value="" className="bg-gray-800 text-white">Select a hub preset...</option>
                 {hubPresets.map((preset) => (
-                  <option key={preset.name} value={preset.name}>
+                  <option key={preset.name} value={preset.name} className="bg-gray-800 text-white">
                     {preset.name}
                   </option>
                 ))}
@@ -217,11 +219,11 @@ const SpokeCalculator: React.FC = () => {
                   onChange={(e) => setLeftCrossPattern(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
-                  <option value="0">Radial (0 cross)</option>
-                  <option value="1">1 Cross</option>
-                  <option value="2">2 Cross</option>
-                  <option value="3">3 Cross</option>
-                  <option value="4">4 Cross</option>
+                  <option value="0" className="bg-gray-800 text-white">Radial (0 cross)</option>
+                  <option value="1" className="bg-gray-800 text-white">1 Cross</option>
+                  <option value="2" className="bg-gray-800 text-white">2 Cross</option>
+                  <option value="3" className="bg-gray-800 text-white">3 Cross</option>
+                  <option value="4" className="bg-gray-800 text-white">4 Cross</option>
                 </select>
               </div>
 
@@ -284,11 +286,11 @@ const SpokeCalculator: React.FC = () => {
                   onChange={(e) => setRightCrossPattern(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
-                  <option value="0">Radial (0 cross)</option>
-                  <option value="1">1 Cross</option>
-                  <option value="2">2 Cross</option>
-                  <option value="3">3 Cross</option>
-                  <option value="4">4 Cross</option>
+                  <option value="0" className="bg-gray-800 text-white">Radial (0 cross)</option>
+                  <option value="1" className="bg-gray-800 text-white">1 Cross</option>
+                  <option value="2" className="bg-gray-800 text-white">2 Cross</option>
+                  <option value="3" className="bg-gray-800 text-white">3 Cross</option>
+                  <option value="4" className="bg-gray-800 text-white">4 Cross</option>
                 </select>
               </div>
 

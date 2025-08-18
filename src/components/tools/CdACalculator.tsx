@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react'
+import Warning from '../Warning'
 
 interface CdAResult {
   value: number
@@ -36,7 +37,7 @@ const bikeTypes = [
 ]
 
 const methods = [
-  { id: 'lookup', name: 'Quick Look-Up Table' },
+  { id: 'lookup', name: 'Reference Values' },
   { id: 'height', name: 'Height-Scaled Rule-of-Thumb' },
   { id: 'weight', name: 'Weight Adjustment' },
   { id: 'bmi', name: 'BMI Adjustment' },
@@ -48,7 +49,7 @@ const CdACalculator: React.FC = () => {
   const [height, setHeight] = useState<string>('')
   const [weight, setWeight] = useState<string>('')
   const [bikeType, setBikeType] = useState<string>('triathlon')
-  const [method, setMethod] = useState<string>('lookup')
+  const [method, setMethod] = useState<string>('combined')
 
   // Auto-calculate BMI
   const bmi = useMemo(() => {
@@ -152,6 +153,10 @@ const CdACalculator: React.FC = () => {
           <p className="text-xl text-white/90 max-w-3xl mx-auto">
             Calculate aerodynamic drag area for cyclists based on body dimensions and bike setup
           </p>
+                  {/* Important Notice */}
+      
+        <Warning message="Not verified formulas, still in development." />
+          
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -218,7 +223,7 @@ const CdACalculator: React.FC = () => {
                     className="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
                   >
                     {bikeTypes.map((type) => (
-                      <option key={type.id} value={type.id}>
+                      <option key={type.id} value={type.id} className="bg-gray-800 text-white">
                         {type.name}
                       </option>
                     ))}
@@ -238,7 +243,7 @@ const CdACalculator: React.FC = () => {
                     className="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
                   >
                     {methods.map((m) => (
-                      <option key={m.id} value={m.id}>
+                      <option key={m.id} value={m.id} className="bg-gray-800 text-white">
                         {m.name}
                       </option>
                     ))}
@@ -324,75 +329,10 @@ const CdACalculator: React.FC = () => {
               </div>
             </div>
 
-            {/* Performance Categories */}
-            <div className="backdrop-blur-md bg-white/10 rounded-xl p-6 border border-white/20">
-              <h2 className="text-2xl font-semibold text-white mb-6">Performance Categories</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-white mb-3">Male Categories</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between text-green-400">
-                      <span>Pro tour TT/tri:</span>
-                      <span>0.17–0.20 m²</span>
-                    </div>
-                    <div className="flex justify-between text-blue-400">
-                      <span>Top age-group tri:</span>
-                      <span>0.20–0.23 m²</span>
-                    </div>
-                    <div className="flex justify-between text-yellow-400">
-                      <span>Strong club rider:</span>
-                      <span>0.27–0.32 m²</span>
-                    </div>
-                    <div className="flex justify-between text-orange-400">
-                      <span>Endurance setup:</span>
-                      <span>0.30–0.40 m²</span>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-white mb-3">Female Categories</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between text-green-400">
-                      <span>Pro tour TT/tri:</span>
-                      <span>0.16–0.19 m²</span>
-                    </div>
-                    <div className="flex justify-between text-blue-400">
-                      <span>Top age-group tri:</span>
-                      <span>0.19–0.22 m²</span>
-                    </div>
-                    <div className="flex justify-between text-yellow-400">
-                      <span>Strong club rider:</span>
-                      <span>0.25–0.30 m²</span>
-                    </div>
-                    <div className="flex justify-between text-orange-400">
-                      <span>Endurance setup:</span>
-                      <span>0.28–0.38 m²</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* Important Notice */}
-        <div className="mt-8 backdrop-blur-md bg-yellow-600/20 border border-yellow-400/40 rounded-xl p-6">
-          <div className="flex items-start space-x-3">
-            <div className="text-2xl">⚠️</div>
-            <div>
-              <h3 className="text-lg font-semibold text-yellow-300 mb-2">Important Notice</h3>
-              <p className="text-yellow-200 mb-2">
-                These formulas provide starting values only. Real wind-tunnel or field testing will always provide more accurate results for individual riders.
-              </p>
-              <ul className="text-sm text-yellow-200 space-y-1">
-                <li>• Values are valid for riders in race kit, helmet, and normal hydration setup</li>
-                <li>• Air density assumed to be ρ ≈ 1.2 kg·m⁻³ (sea level)</li>
-                <li>• Consider field testing using methods like Chung protocol for validation</li>
-                <li>• The best CdA is one that allows comfortable power output for your event duration</li>
-              </ul>
-            </div>
-          </div>
-        </div>
+
       </div>
     </div>
   )
