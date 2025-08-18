@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
   Filler,
+  TooltipItem,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 
@@ -97,10 +98,10 @@ const VelocityChart: React.FC<VelocityChartProps> = ({ data, config1Name, config
         borderColor: 'rgba(255, 255, 255, 0.2)',
         borderWidth: 1,
         callbacks: {
-          label: function(context: any) {
+          label: function(context: TooltipItem<'line'>) {
             return `${context.dataset.label}: ${context.parsed.y.toFixed(1)} km/h`;
           },
-          afterBody: function(tooltipItems: any[]) {
+          afterBody: function(tooltipItems: TooltipItem<'line'>[]) {
             const index = tooltipItems[0].dataIndex;
             const point = data[index];
             return [

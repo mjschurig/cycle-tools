@@ -7,6 +7,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  TooltipItem,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 
@@ -91,7 +92,7 @@ const PowerAnalysisChart: React.FC<PowerAnalysisChartProps> = ({ data }) => {
         borderColor: 'rgba(255, 255, 255, 0.2)',
         borderWidth: 1,
         callbacks: {
-          label: function(context: any) {
+          label: function(context: TooltipItem<'bar'>) {
             const label = context.dataset.label || '';
             const value = context.parsed.y;
             const dataLabel = context.label;
