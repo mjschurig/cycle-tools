@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CdA Drag Coefficient Estimator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .input-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid #e9ecef;
+        }
+
+        .results-section {
+            background: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid #e9ecef;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .method-selector {
+            background: #e8f4fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .result-value {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .result-unit {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .method-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .reference-table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .formula-display {
+            background: #f1f3f4;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            border-left: 4px solid #3498db;
+        }
+
+        .warning {
+            background: #ffeaa7;
+            border: 1px solid #fdcb6e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CdA Drag Coefficient Estimator</h1>
+            <p>Calculate aerodynamic drag area for cyclists based on body dimensions and bike setup</p>
+        </div>
+
+        <div class="main-content">
+            <div class="input-section">
+                <h2>Rider Information</h2>
+                
+                <div class="form-group">
+                    <label for="height">Height (cm):</label>
+                    <input type="number" id="height" placeholder="e.g., 178" min="140" max="220" step="0.1">
+                </div>
+
+                <div class="form-group">
+                    <label for="weight">Weight (kg):</label>
+                    <input type="number" id="weight" placeholder="e.g., 75" min="40" max="150" step="0.1">
+                </div>
+
+                <div class="form-group">
+                    <label for="bmi">BMI (calculated automatically):</label>
+                    <input type="number" id="bmi" readonly placeholder="Will be calculated">
+                </div>
+
+                <div class="form-group">
+                    <label for="bikeType">Bike Type & Position:</label>
+                    <select id="bikeType">
+                        <option value="triathlon">Triathlon bike, full aero tuck</option>
+                        <option value="road-aero">Road race bike + clip-on aero bars</option>
+                        <option value="road-drops">Road race bike, drops position</option>
+                        <option value="endurance">Road endurance / winter bike, tops</option>
+                    </select>
+                </div>
+
+                <div class="method-selector">
+                    <label for="method">Calculation Method:</label>
+                    <select id="method">
+                        <option value="lookup">Quick Look-Up Table</option>
+                        <option value="height">Height-Scaled Rule-of-Thumb</option>
+                        <option value="weight">Weight Adjustment</option>
+                        <option value="bmi">BMI Adjustment</option>
+                        <option value="combined">Combined Height + Weight/BMI</option>
+                        <option value="offset">Bike-Type Offset Method</option>
+                    </select>
+                </div>
+
+                <button class="calculate-btn" onclick="calculateCdA()">Calculate CdA</button>
+            </div>
+
+            <div class="results-section">
+                <h2>Results</h2>
+                
+                <div class="result-card" id="resultCard" style="display: none;">
+                    <h3>Estimated CdA</h3>
+                    <div class="result-value" id="resultValue">0.000</div>
+                    <div class="result-unit">m²</div>
+                </div>
+
+                <div class="method-info" id="methodInfo" style="display: none;">
+                    <h4>Method Used:</h4>
+                    <p id="methodDescription"></p>
+                    <div class="formula-display" id="formulaDisplay"></div>
+                </div>
+
+                <div class="reference-table">
+                    <h3>Reference Values (70-75kg rider)</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Position / Bike Type</th>
+                                <th>Typical CdA (m²)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Triathlon bike, full aero tuck</td>
+                                <td>0.20 – 0.23</td>
+                            </tr>
+                            <tr>
+                                <td>Road race bike + clip-on aero bars</td>
+                                <td>0.23 – 0.26</td>
+                            </tr>
+                            <tr>
+                                <td>Road race bike, drops</td>
+                                <td>0.28 – 0.31</td>
+                            </tr>
+                            <tr>
+                                <td>Road endurance / winter bike, tops</td>
+                                <td>0.32 – 0.38</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="warning">
+                    <strong>Important:</strong> These formulas provide starting values only. Real wind-tunnel or field testing will always provide more accurate results for individual riders.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Reference values and constants
+        const REFERENCE_HEIGHT = 178; // cm
+        const REFERENCE_WEIGHT = 75; // kg
+        const REFERENCE_BMI = 23;
+        
+        // CdA reference values for different bike types (midpoint of ranges)
+        const CDA_REFERENCE = {
+            'triathlon': 0.215,     // 0.20-0.23
+            'road-aero': 0.245,     // 0.23-0.26
+            'road-drops': 0.295,    // 0.28-0.31
+            'endurance': 0.35       // 0.32-0.38
+        };
+
+        // Bike type offsets relative to road drops position
+        const BIKE_OFFSETS = {
+            'triathlon': -0.065,    // -0.05 to -0.08, using -0.065
+            'road-aero': -0.04,     // -0.03 to -0.05, using -0.04
+            'road-drops': 0,        // baseline
+            'endurance': 0.03       // +0.02 to +0.04, using +0.03
+        };
+
+        // Auto-calculate BMI when height or weight changes
+        document.getElementById('height').addEventListener('input', calculateBMI);
+        document.getElementById('weight').addEventListener('input', calculateBMI);
+
+        function calculateBMI() {
+            const height = parseFloat(document.getElementById('height').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            
+            if (height && weight) {
+                const heightM = height / 100;
+                const bmi = weight / (heightM * heightM);
+                document.getElementById('bmi').value = bmi.toFixed(1);
+            } else {
+                document.getElementById('bmi').value = '';
+            }
+        }
+
+        function calculateCdA() {
+            const height = parseFloat(document.getElementById('height').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const bmi = parseFloat(document.getElementById('bmi').value);
+            const bikeType = document.getElementById('bikeType').value;
+            const method = document.getElementById('method').value;
+
+            if (!height || !weight) {
+                alert('Please enter both height and weight.');
+                return;
+            }
+
+            let cda = 0;
+            let methodDescription = '';
+            let formula = '';
+
+            switch (method) {
+                case 'lookup':
+                    cda = CDA_REFERENCE[bikeType];
+                    methodDescription = 'Quick Look-Up Table: Uses reference CdA values for a 75kg, 178cm rider.';
+                    formula = `CdA = ${cda.toFixed(3)} m² (reference value for ${bikeType})`;
+                    break;
+
+                case 'height':
+                    const heightFactor = Math.pow(height / REFERENCE_HEIGHT, 2);
+                    cda = CDA_REFERENCE[bikeType] * heightFactor;
+                    methodDescription = 'Height-Scaled Rule-of-Thumb: Adjusts reference CdA based on height squared scaling.';
+                    formula = `CdA = ${CDA_REFERENCE[bikeType].toFixed(3)} × (${height}/${REFERENCE_HEIGHT})² = ${cda.toFixed(3)} m²`;
+                    break;
+
+                case 'weight':
+                    const weightFactor = Math.pow(weight / REFERENCE_WEIGHT, 0.3);
+                    cda = CDA_REFERENCE[bikeType] * weightFactor;
+                    methodDescription = 'Weight Adjustment: Adjusts reference CdA based on weight with 0.3 exponent.';
+                    formula = `CdA = ${CDA_REFERENCE[bikeType].toFixed(3)} × (${weight}/${REFERENCE_WEIGHT})^0.3 = ${cda.toFixed(3)} m²`;
+                    break;
+
+                case 'bmi':
+                    const bmiFactor = Math.pow(bmi / REFERENCE_BMI, 0.3);
+                    cda = CDA_REFERENCE[bikeType] * bmiFactor;
+                    methodDescription = 'BMI Adjustment: Adjusts reference CdA based on BMI with 0.3 exponent.';
+                    formula = `CdA = ${CDA_REFERENCE[bikeType].toFixed(3)} × (${bmi}/${REFERENCE_BMI})^0.3 = ${cda.toFixed(3)} m²`;
+                    break;
+
+                case 'combined':
+                    const heightFactorComb = Math.pow(height / REFERENCE_HEIGHT, 2);
+                    const weightFactorComb = Math.pow(weight / REFERENCE_WEIGHT, 0.3);
+                    cda = CDA_REFERENCE[bikeType] * heightFactorComb * weightFactorComb;
+                    methodDescription = 'Combined Height + Weight: Applies both height squared and weight 0.3 scaling factors.';
+                    formula = `CdA = ${CDA_REFERENCE[bikeType].toFixed(3)} × (${height}/${REFERENCE_HEIGHT})² × (${weight}/${REFERENCE_WEIGHT})^0.3 = ${cda.toFixed(3)} m²`;
+                    break;
+
+                case 'offset':
+                    // Start with road drops baseline and apply offset
+                    const baselineCdA = CDA_REFERENCE['road-drops'];
+                    const heightFactorOffset = Math.pow(height / REFERENCE_HEIGHT, 2);
+                    const weightFactorOffset = Math.pow(weight / REFERENCE_WEIGHT, 0.3);
+                    const adjustedBaseline = baselineCdA * heightFactorOffset * weightFactorOffset;
+                    cda = adjustedBaseline + BIKE_OFFSETS[bikeType];
+                    methodDescription = 'Bike-Type Offset Method: Starts with road drops baseline, adjusts for rider dimensions, then applies bike-specific offset.';
+                    formula = `CdA = (${baselineCdA.toFixed(3)} × height_factor × weight_factor) + ${BIKE_OFFSETS[bikeType].toFixed(3)} = ${cda.toFixed(3)} m²`;
+                    break;
+            }
+
+            // Display results
+            document.getElementById('resultValue').textContent = cda.toFixed(3);
+            document.getElementById('methodDescription').textContent = methodDescription;
+            document.getElementById('formulaDisplay').textContent = formula;
+            document.getElementById('resultCard').style.display = 'block';
+            document.getElementById('methodInfo').style.display = 'block';
+        }
+
+        // Initialize with some default values for demonstration
+        document.getElementById('height').value = '178';
+        document.getElementById('weight').value = '75';
+        calculateBMI();
+    </script>
+</body>
+</html>

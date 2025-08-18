@@ -1,78 +1,75 @@
-# Cycle Tools
+# CdA Drag Coefficient Estimator
 
-A comprehensive collection of bicycle calculation tools for cyclists, mechanics, and enthusiasts. Built with React, TypeScript, Vite, and Tailwind CSS.
+A comprehensive web-based tool for calculating the aerodynamic drag area (CdA) of cyclists based on rider dimensions and bike setup.
 
-## 🚴‍♂️ Features
+## Features
 
-- **Gear Ratio Calculator** - Calculate gear ratios, gear inches, and development
-- **Speed Calculator** - Determine speed based on cadence and gear ratios
-- **Power Calculator** - Calculate power output and training zones
-- **Tire Pressure Calculator** - Optimal tire pressure recommendations
-- **Wheel Size Calculator** - Convert between different wheel size standards
-- **Cadence Calculator** - Optimize pedaling cadence for efficiency
+- **Multiple Calculation Methods**: Choose from 6 different estimation methods
+- **Comprehensive Bike Types**: Support for triathlon, road race, endurance bikes
+- **Real-time Calculations**: Instant BMI calculation and CdA estimation
+- **Modern Interface**: Clean, responsive design with detailed results
+- **Formula Verification**: All formulas verified against cycling aerodynamics research
 
-## 🛠️ Tech Stack
+## Calculation Methods
 
-- **React 18** - Modern React with hooks
-- **TypeScript** - Type-safe development
-- **Vite** - Fast build tool and dev server
-- **Tailwind CSS** - Utility-first CSS framework
-- **pnpm** - Fast, disk space efficient package manager
+### 1. Quick Look-Up Table
+Uses reference CdA values for a standard 75kg, 178cm rider across different bike types.
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js 18 or higher
-- pnpm (recommended) or npm
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/your-username/cycle-tools.git
-cd cycle-tools
+### 2. Height-Scaled Rule-of-Thumb
+Adjusts CdA based on height using the formula:
+```
+CdA = CdA_ref × (height_you / height_ref)²
 ```
 
-2. Install dependencies:
-```bash
-pnpm install
+### 3. Weight Adjustment
+Modifies CdA based on weight using:
+```
+CdA = CdA_table × (weight / 75kg)^0.3
 ```
 
-3. Start the development server:
-```bash
-pnpm dev
+### 4. BMI Adjustment
+Similar to weight adjustment but using BMI:
+```
+CdA = CdA_table × (BMI / 23)^0.3
 ```
 
-4. Open http://localhost:5173 in your browser
-
-### Building for Production
-
-```bash
-pnpm build
+### 5. Combined Height + Weight/BMI
+Applies both height and weight scaling factors:
+```
+CdA = CdA_ref × (H/H_ref)² × (W/W_ref)^0.3
 ```
 
-The built files will be in the `dist` directory.
+### 6. Bike-Type Offset Method
+Starts with road drops baseline and applies bike-specific offsets.
 
-## 📱 Mobile First Design
+## Reference Values
 
-This application is designed with a mobile-first approach, ensuring excellent usability on smartphones and tablets while providing an enhanced experience on desktop devices.
+| Position / Bike Type | Typical CdA (m²) |
+|---------------------|------------------|
+| Triathlon bike, full aero tuck | 0.20 – 0.23 |
+| Road race bike + clip-on aero bars | 0.23 – 0.26 |
+| Road race bike, drops | 0.28 – 0.31 |
+| Road endurance / winter bike, tops | 0.32 – 0.38 |
 
-## 🚀 Deployment
+## Usage
 
-The project is configured to automatically deploy to GitHub Pages when changes are pushed to the main branch. The deployment is handled by GitHub Actions.
+1. Open `cda-estimator.html` in any modern web browser
+2. Enter your height and weight (BMI will be calculated automatically)
+3. Select your bike type and riding position
+4. Choose the calculation method you prefer
+5. Click "Calculate CdA" to see your estimated drag coefficient
 
-To set up deployment:
+## Important Notes
 
-1. Go to your repository settings
-2. Navigate to Pages
-3. Set Source to "GitHub Actions"
-4. Push to main branch to trigger deployment
+- These formulas provide starting values only
+- Real wind-tunnel or field testing will always provide more accurate results
+- Values are valid for riders in race kit, helmet, and normal hydration setup
+- Air density assumed to be ρ ≈ 1.2 kg·m⁻³ (sea level)
 
-## 🤝 Contributing
+## Formula Verification
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+All formulas have been verified against cycling aerodynamics research and match the examples provided in professional cycling literature. The tool includes built-in validation using known test cases.
 
-## 📄 License
+## Browser Compatibility
 
-This project is open source and available under the MIT License.
+Works with all modern browsers including Chrome, Firefox, Safari, and Edge. No additional dependencies required.
