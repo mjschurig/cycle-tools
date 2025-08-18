@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
   Filler,
+  TooltipItem,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 
@@ -97,10 +98,10 @@ const DistanceChart: React.FC<DistanceChartProps> = ({ data, config1Name, config
         borderColor: 'rgba(255, 255, 255, 0.2)',
         borderWidth: 1,
         callbacks: {
-          label: function(context: any) {
+          label: function(context: TooltipItem<'line'>) {
             return `${context.dataset.label}: ${context.parsed.y.toFixed(0)} m`;
           },
-          afterBody: function(tooltipItems: any[]) {
+          afterBody: function(tooltipItems: TooltipItem<'line'>[]) {
             const index = tooltipItems[0].dataIndex;
             const point = data[index];
             return [
@@ -150,7 +151,7 @@ const DistanceChart: React.FC<DistanceChartProps> = ({ data, config1Name, config
         },
         ticks: {
           color: 'rgba(255, 255, 255, 0.7)',
-          callback: function(value: any) {
+          callback: function(value: string | number) {
             return `${value}m`;
           }
         },
